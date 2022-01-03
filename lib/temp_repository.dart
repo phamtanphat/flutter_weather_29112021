@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_weather_29112021/dio_client.dart';
+import 'package:flutter_weather_29112021/temp_request.dart';
 
 class TempRepository{
-  // late Dio _dio;
-  //
-  // TempRepository(){
-  //   _dio = DioClient.instance.dio;
-  // }
-  //
-  // void getTempCity(){
-  //   _dio.get()
-  // }
+  late TempRequest _tempRequest;
 
+  TempRepository(TempRequest tempRequest){
+    _tempRequest = tempRequest;
+  }
+
+  Future getTempCity(){
+    return _tempRequest.tempCityRequest();
+  }
 }
