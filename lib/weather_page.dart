@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_29112021/dio_client.dart';
 
 class WeatherPage extends StatefulWidget {
   late double width;
@@ -15,6 +16,16 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
+
+  @override
+  void didUpdateWidget(covariant WeatherPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    Demo demo1 = Demo.instance;
+    Demo demo2 = Demo.instance;
+
+    print(demo1 == demo2);
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.width = MediaQuery.of(context).size.width;
@@ -39,10 +50,10 @@ class _WeatherPageState extends State<WeatherPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // searchBox(),
-              // Expanded(flex: 5, child: tempCity()),
-              // Expanded(flex: 2, child: detailTemp())
-              Expanded(child: notFoundCity())
+              searchBox(),
+              Expanded(flex: 5, child: tempCity()),
+              Expanded(flex: 2, child: detailTemp())
+              // Expanded(child: notFoundCity())
             ],
           ),
         ),
