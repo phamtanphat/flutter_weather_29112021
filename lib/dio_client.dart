@@ -9,7 +9,7 @@ class DioClient{
     dio = Dio(BaseOptions(
       receiveTimeout: 30000,
       connectTimeout: 30000,
-      baseUrl: "http://api.openweathermap.org"
+      baseUrl: "https://api.openweathermap.org"
     ));
     dio.interceptors.add(LogInterceptor(request: true));
   }

@@ -20,10 +20,6 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void didUpdateWidget(covariant WeatherPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    Demo demo1 = Demo.instance;
-    Demo demo2 = Demo.instance;
-
-    print(demo1 == demo2);
   }
 
   @override
