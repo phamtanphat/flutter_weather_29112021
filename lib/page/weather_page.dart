@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_29112021/dio_client.dart';
+import 'package:flutter_weather_29112021/api/dio_client.dart';
 
 class WeatherPage extends StatefulWidget {
   late double width;
