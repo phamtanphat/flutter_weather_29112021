@@ -7,7 +7,7 @@ class TempRepository{
     _tempRequest = tempRequest;
   }
 
-  Future getTempCity(){
-    return _tempRequest.tempCityRequest();
-  }
+  // Future<A> getTempCity(){
+  //   return _tempRequest.tempCityRequest();
+  // }
 }

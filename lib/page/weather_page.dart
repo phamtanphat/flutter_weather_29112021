@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_29112021/api/dio_client.dart';
+import 'package:flutter_weather_29112021/base/resource_model.dart';
+import 'package:flutter_weather_29112021/model/demo_model.dart';
 
 class WeatherPage extends StatefulWidget {
   late double width;
@@ -20,6 +22,20 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void didUpdateWidget(covariant WeatherPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    DemoModel test = DemoModel("abc","def");
+
+    ResourceModel<DemoModel> data = ResourceModel.success(test);
+    switch(data.runtimeType){
+      case Loading :
+        print("Loading");
+        break;
+      case Success :
+        print((data as Success<DemoModel>).data.toString());
+        break;
+      case Error :
+        print("Error");
+        break;
+    }
   }
 
   @override
