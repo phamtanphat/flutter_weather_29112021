@@ -25,17 +25,11 @@ class _WeatherPageState extends State<WeatherPage> {
     DemoModel test = DemoModel("abc","def");
 
     ResourceModel<DemoModel> data = ResourceModel.success(test);
-    switch(data.runtimeType){
-      case Loading :
-        print("Loading");
-        break;
-      case Success :
-        print((data as Success<DemoModel>).data.toString());
-        break;
-      case Error :
-        print("Error");
-        break;
-    }
+    data.when(
+        success: (DemoModel data) => print("${data.toString()}"),
+        loading: () => print("loading"),
+        error: ([String? message]) => print(message)
+    );
   }
 
   @override
