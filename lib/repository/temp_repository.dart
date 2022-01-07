@@ -16,20 +16,20 @@ class TempRepository{
   Future<ResourceModel<WeatherModel>> getTempCity(String cityName) async{
     Completer<ResourceModel<WeatherModel>> completer = Completer();
     completer.complete(ResourceModel.loading());
-
     try{
       Response response = await _tempRequest.tempCityRequest(cityName);
       if(response.statusCode == 200){
         WeatherModel weatherModel = WeatherModel.fromJson(response.data);
+        completer.complete(ResourceModel.success(weatherModel));
       }
     } on DioError catch (error){
       if(error.response != null){
         if(error.response!.statusCode == 404){
-          print("Dio ${error.response!.data['message']}");
+          completer.complete(ResourceModel.error(error.response!.data['message']));
         }
       }
     }catch(e){
-      print(e.toString());
+      completer.complete(ResourceModel.error(e.toString()));
     }
     return completer.future;
   }
