@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -21,22 +22,25 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
+  late TempRequest tempRequest;
+  late TempRepository repository;
+  late Completer<ResourceModel<WeatherModel>> completer;
 
   @override
-  void didUpdateWidget(covariant WeatherPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // DemoModel test = DemoModel("abc","def");
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    tempRequest = TempRequest();
+    repository = TempRepository(tempRequest);
+    // completer = Completer();
     //
-    // ResourceModel<DemoModel> data = ResourceModel.error("loi");
-    // data.when(
-    //     success: (DemoModel data) => print("${data.toString()}"),
-    //     loading: () => print("loading"),
-    //     error: ([String? message]) => print(message)
-    // );
-    TempRequest tempRequest = TempRequest();
-    TempRepository repository = TempRepository(tempRequest);
-
-    repository.getTempCity("newyork");
+    // .then((value) {
+    //   value.when(
+    //       success: (WeatherModel model) =>
+    //           completer.complete(ResourceModel.success(model)),
+    //       loading: () => completer.complete(ResourceModel.loading()),
+    //       error: ([String? message]) =>
+    //           completer.completeError(ResourceModel.error(message)));
+    // });
   }
 
   @override
@@ -60,14 +64,33 @@ class _WeatherPageState extends State<WeatherPage> {
           )),
           constraints: BoxConstraints.expand(),
           padding: const EdgeInsets.all(5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              searchBox(),
-              Expanded(flex: 5, child: tempCity()),
-              Expanded(flex: 2, child: detailTemp())
-              // Expanded(child: notFoundCity())
-            ],
+          child: FutureBuilder<ResourceModel<WeatherModel>>(
+            future: repository.getTempCity("hanoi"),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Expanded(child: notFoundCity());
+              }
+              if (snapshot.hasData) {
+                snapshot.data!.when(
+                    success: (WeatherModel model){
+                      return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            searchBox(),
+                            Expanded(flex: 5, child: tempCity()),
+                            Expanded(flex: 2, child: detailTemp())
+                          ]);
+                    },
+                    loading: (){
+                      return Center(child: CircularProgressIndicator(color: Colors.blue,));
+                    },
+                    error: ([String? message]){
+                      return Expanded(child: notFoundCity());
+                    }
+                );
+              }
+              return SizedBox();
+            },
           ),
         ),
       ),
@@ -131,9 +154,11 @@ class _WeatherPageState extends State<WeatherPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/images/ic_humidity.png"),
-                  Text("1013", style: TextStyle(fontSize: widget.width / 20 ,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[900])),
+                  Text("1013",
+                      style: TextStyle(
+                          fontSize: widget.width / 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[900])),
                   Text("Humidity",
                       style: TextStyle(
                           fontSize: widget.width / 25,
@@ -151,9 +176,11 @@ class _WeatherPageState extends State<WeatherPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/images/ic_wind.png"),
-                  Text("1013", style: TextStyle(fontSize: widget.width / 20 ,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[900])),
+                  Text("1013",
+                      style: TextStyle(
+                          fontSize: widget.width / 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[900])),
                   Text("Wind",
                       style: TextStyle(
                           fontSize: widget.width / 25,
@@ -171,9 +198,11 @@ class _WeatherPageState extends State<WeatherPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/images/ic_air_pressure.png"),
-                  Text("1013", style: TextStyle(fontSize: widget.width / 20 ,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey[900])),
+                  Text("1013",
+                      style: TextStyle(
+                          fontSize: widget.width / 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[900])),
                   Text("Air pressure",
                       style: TextStyle(
                           fontSize: widget.width / 25,
@@ -187,14 +216,17 @@ class _WeatherPageState extends State<WeatherPage> {
       ],
     );
   }
-  Widget notFoundCity(){
+
+  Widget notFoundCity() {
     return Container(
       constraints: BoxConstraints.expand(),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset("assets/images/ic_not_found.png"),
-          Text("Seems like you aren't on earth" , style: TextStyle(fontSize: widget.width / 23 , color: Colors.white)),
+          Text("Seems like you aren't on earth",
+              style:
+                  TextStyle(fontSize: widget.width / 23, color: Colors.white)),
         ],
       ),
     );

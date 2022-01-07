@@ -25,11 +25,11 @@ class TempRepository{
     } on DioError catch (error){
       if(error.response != null){
         if(error.response!.statusCode == 404){
-          completer.complete(ResourceModel.error(error.response!.data['message']));
+          completer.completeError(ResourceModel.error(error.response!.data['message']));
         }
       }
     }catch(e){
-      completer.complete(ResourceModel.error(e.toString()));
+      completer.completeError(ResourceModel.error(e.toString()));
     }
     return completer.future;
   }
