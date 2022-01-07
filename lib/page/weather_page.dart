@@ -5,6 +5,7 @@ import 'package:flutter_weather_29112021/api/dio_client.dart';
 import 'package:flutter_weather_29112021/api/request/temp_request.dart';
 import 'package:flutter_weather_29112021/base/resource_model.dart';
 import 'package:flutter_weather_29112021/model/demo_model.dart';
+import 'package:flutter_weather_29112021/model/weather_model.dart';
 import 'package:flutter_weather_29112021/repository/temp_repository.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _WeatherPageState extends State<WeatherPage> {
     TempRequest tempRequest = TempRequest();
     TempRepository repository = TempRepository(tempRequest);
 
-    repository.getTempCity("hanoi");
+    repository.getTempCity("newyork");
   }
 
   @override

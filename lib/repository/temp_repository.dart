@@ -19,9 +19,17 @@ class TempRepository{
 
     try{
       Response response = await _tempRequest.tempCityRequest(cityName);
-      print(response.toString());
+      if(response.statusCode == 200){
+        WeatherModel weatherModel = WeatherModel.fromJson(response.data);
+      }
+    } on DioError catch (error){
+      if(error.response != null){
+        if(error.response!.statusCode == 404){
+          print("Dio ${error.response!.data['message']}");
+        }
+      }
     }catch(e){
-
+      print(e.toString());
     }
     return completer.future;
   }

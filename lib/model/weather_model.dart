@@ -75,4 +75,8 @@ class WeatherModel {
     return map;
   }
 
+  @override
+  String toString() {
+    return 'WeatherModel{_weather: $_weather, _main: $_main, _wind: $_wind, _sys: $_sys, _name: $_name, _cod: $_cod}';
+  }
 }

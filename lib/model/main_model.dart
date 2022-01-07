@@ -2,9 +2,9 @@
 
 class Main {
   Main({
-    int? temp,
-    int? pressure,
-    int? humidity
+    num? temp,
+    num? pressure,
+    num? humidity
   }){
     _temp = temp;
     _pressure = pressure;
@@ -16,13 +16,13 @@ class Main {
     _pressure = json['pressure'];
     _humidity = json['humidity'];
   }
-  int? _temp;
-  int? _pressure;
-  int? _humidity;
+  num? _temp;
+  num? _pressure;
+  num? _humidity;
 
-  int? get temp => _temp;
-  int? get pressure => _pressure;
-  int? get humidity => _humidity;
+  num? get temp => _temp;
+  num? get pressure => _pressure;
+  num? get humidity => _humidity;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
