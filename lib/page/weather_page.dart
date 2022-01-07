@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_29112021/api/dio_client.dart';
+import 'package:flutter_weather_29112021/api/request/temp_request.dart';
 import 'package:flutter_weather_29112021/base/resource_model.dart';
 import 'package:flutter_weather_29112021/model/demo_model.dart';
+import 'package:flutter_weather_29112021/repository/temp_repository.dart';
 
 class WeatherPage extends StatefulWidget {
   late double width;
@@ -22,14 +24,18 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void didUpdateWidget(covariant WeatherPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    DemoModel test = DemoModel("abc","def");
+    // DemoModel test = DemoModel("abc","def");
+    //
+    // ResourceModel<DemoModel> data = ResourceModel.error("loi");
+    // data.when(
+    //     success: (DemoModel data) => print("${data.toString()}"),
+    //     loading: () => print("loading"),
+    //     error: ([String? message]) => print(message)
+    // );
+    TempRequest tempRequest = TempRequest();
+    TempRepository repository = TempRepository(tempRequest);
 
-    ResourceModel<DemoModel> data = ResourceModel.success(test);
-    data.when(
-        success: (DemoModel data) => print("${data.toString()}"),
-        loading: () => print("loading"),
-        error: ([String? message]) => print(message)
-    );
+    repository.getTempCity("hanoi");
   }
 
   @override
