@@ -24,23 +24,17 @@ class WeatherPage extends StatefulWidget {
 class _WeatherPageState extends State<WeatherPage> {
   late TempRequest tempRequest;
   late TempRepository repository;
-  late Completer<ResourceModel<WeatherModel>> completer;
+  late Future<ResourceModel<WeatherModel>> futureWeather;
+  TextEditingController controller = TextEditingController();
+
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     tempRequest = TempRequest();
     repository = TempRepository(tempRequest);
-    // completer = Completer();
-    //
-    // .then((value) {
-    //   value.when(
-    //       success: (WeatherModel model) =>
-    //           completer.complete(ResourceModel.success(model)),
-    //       loading: () => completer.complete(ResourceModel.loading()),
-    //       error: ([String? message]) =>
-    //           completer.completeError(ResourceModel.error(message)));
-    // });
+    futureWeather = repository.getTempCity("hanoi");
+    print("Didchange");
   }
 
   @override
@@ -65,27 +59,41 @@ class _WeatherPageState extends State<WeatherPage> {
           constraints: BoxConstraints.expand(),
           padding: const EdgeInsets.all(5),
           child: FutureBuilder<ResourceModel<WeatherModel>>(
-            future: repository.getTempCity("hanoi"),
+            initialData: null,
+            future: futureWeather,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Expanded(child: notFoundCity());
+                return notFoundCity();
               }
               if (snapshot.hasData) {
-                snapshot.data!.when(
+                return snapshot.data!.when(
                     success: (WeatherModel model){
-                      return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            searchBox(),
-                            Expanded(flex: 5, child: tempCity()),
-                            Expanded(flex: 2, child: detailTemp())
-                          ]);
+                      return LayoutBuilder(
+                          builder: (context, constraint) {
+                            return SingleChildScrollView(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      minHeight: constraint.maxHeight),
+                                  child: IntrinsicHeight(
+                                    child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .stretch,
+                                        children: [
+                                          searchBox(),
+                                          Expanded(flex: 5, child: tempCity(model)),
+                                          Expanded(flex: 2, child: detailTemp(model))
+                                        ]),
+                                  ),
+                                ),
+                              );
+                          }
+                      );
                     },
                     loading: (){
                       return Center(child: CircularProgressIndicator(color: Colors.blue,));
                     },
                     error: ([String? message]){
-                      return Expanded(child: notFoundCity());
+                      return notFoundCity();
                     }
                 );
               }
@@ -99,31 +107,34 @@ class _WeatherPageState extends State<WeatherPage> {
 
   Widget searchBox() {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         fillColor: Colors.white,
         filled: true,
         border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10))),
         hintText: "Input city name",
-        suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {}),
+        suffixIcon: IconButton(icon: Icon(Icons.search), onPressed: () {
+          futureWeather = repository.getTempCity(controller.text.toString());
+        }),
       ),
     );
   }
 
-  Widget tempCity() {
+  Widget tempCity(WeatherModel model) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("31 \u00BA C",
+        Text("${model.main?.temp.toString()} \u00BA C",
             style: TextStyle(color: Colors.yellow, fontSize: widget.width / 4)),
-        Text("Lagos,NG",
+        Text("${model.name.toString()},${model.sys?.country.toString()}",
             style: TextStyle(color: Colors.white, fontSize: widget.width / 10)),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.network(
-              "https://openweathermap.org/img/wn/04n@2x.png",
+              "https://openweathermap.org/img/wn/${model.weather?[0].icon}@2x.png",
               width: widget.width / 2,
               height: widget.width / 3,
               fit: BoxFit.fitWidth,
@@ -131,7 +142,7 @@ class _WeatherPageState extends State<WeatherPage> {
             SizedBox(
               width: 5,
             ),
-            Text("broken clouds",
+            Text("${model.weather?[0].description}",
                 style: TextStyle(
                     fontSize: widget.width / 22,
                     fontWeight: FontWeight.bold,
@@ -142,7 +153,7 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget detailTemp() {
+  Widget detailTemp(WeatherModel model) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -154,7 +165,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/images/ic_humidity.png"),
-                  Text("1013",
+                  Text("${model.main?.humidity}",
                       style: TextStyle(
                           fontSize: widget.width / 20,
                           fontWeight: FontWeight.bold,
@@ -176,7 +187,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/images/ic_wind.png"),
-                  Text("1013",
+                  Text("${model.wind?.speed}",
                       style: TextStyle(
                           fontSize: widget.width / 20,
                           fontWeight: FontWeight.bold,
@@ -198,7 +209,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset("assets/images/ic_air_pressure.png"),
-                  Text("1013",
+                  Text("${model.main?.pressure}",
                       style: TextStyle(
                           fontSize: widget.width / 20,
                           fontWeight: FontWeight.bold,

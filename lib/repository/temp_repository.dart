@@ -15,7 +15,7 @@ class TempRepository{
 
   Future<ResourceModel<WeatherModel>> getTempCity(String cityName) async{
     Completer<ResourceModel<WeatherModel>> completer = Completer();
-    completer.complete(ResourceModel.loading());
+    // completer.complete(ResourceModel.loading());
     try{
       Response response = await _tempRequest.tempCityRequest(cityName);
       if(response.statusCode == 200){
